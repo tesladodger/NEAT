@@ -8,9 +8,8 @@ hs_err_pid*
 *.iml
 com_crashlytics_export_strings.xml
 
-/build/
-
 /local.properties
 .gradle/
 gradle-app.setting
 /build/
+.gradletasknamecache
