@@ -1,3 +1,6 @@
+package com.tesladodger.neat;
+
+
 /**
  * Class for the members of a population.
  * Each individual has a genome.

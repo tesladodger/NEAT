@@ -1,3 +1,6 @@
+package com.tesladodger.neat;
+
+
 /**
  * Contains the information of a connection in the genome.
  */

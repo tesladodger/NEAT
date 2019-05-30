@@ -1,3 +1,6 @@
+package com.tesladodger.neat;
+
+
 /**
  * Abstract class that contains the methods relating to an individual that are particular to a
  * problem. Is the contact between the user and the algorithm.
