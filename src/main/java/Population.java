@@ -60,6 +60,7 @@ public class Population {
 
     public void updateAliveIndividuals () {
         for (Individual individual : individuals) {
+            if (!individual.isAlive()) continue;
             individual.updateSensors();
             individual.think();
             individual.move();
