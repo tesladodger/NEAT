@@ -451,12 +451,29 @@ class Genome {
         }
 
 
-        System.out.print("\nConnections  :  ");
-        for (ConnectionGene con : genome.getConnections().values()) {
-            System.out.printf("%3s : %3s -> %-3s %4s %5s   || ",
-                    con.getInnovationNumber(), con.getInNode(), con.getOutNode(), con.getWeight(), con.isExpressed());
+        System.out.print("\nConnections  :  \n");
+
+        for (Integer conKey : genome.connectionKeys) {
+            System.out.printf("|  %3s   ", genome.connections.get(conKey).getInnovationNumber());
         }
+        System.out.println("|");
+        for (Integer conKey : genome.connectionKeys) {
+            System.out.printf("| %2s->%2s ",
+                    genome.connections.get(conKey).getInNode(),
+                    genome.connections.get(conKey).getOutNode());
+        }
+        System.out.println("|");
+        for (Integer conKey : genome.connectionKeys) {
+            System.out.printf("| %5s  ", genome.connections.get(conKey).isExpressed() ? " " : "DISAB");
+        }
+        System.out.println("|");
+        for (Integer conKey : genome.connectionKeys) {
+            System.out.printf("|%8.5f", genome.connections.get(conKey).getWeight());
+        }
+        System.out.println("|");
+
 
         System.out.println();
+
     }
 }

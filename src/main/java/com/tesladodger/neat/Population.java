@@ -6,7 +6,6 @@ import java.util.Random;
 
 // todo getter for the genome as a list, in order to render it in a game
 // todo expected fitness in only_show_best mode
-// todo print the genome like the paper
 
 /**
  * Collection of individuals separated into species.
@@ -327,7 +326,7 @@ public class Population {
      *
      * @param only_show_best true to set the option, false to reset it;
      */
-    public void setOnly_show_best (boolean only_show_best) {
+    public void set_only_show_best (boolean only_show_best) {
         this.only_show_best = only_show_best;
     }
 
