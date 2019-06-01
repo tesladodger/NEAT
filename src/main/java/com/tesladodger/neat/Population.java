@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+// todo getter for the genome as a list, in order to render it in a game
+// todo expected fitness in only_show_best mode
+// todo print the genome like the paper
 
 /**
  * Collection of individuals separated into species.
@@ -28,6 +31,10 @@ public class Population {
 
     /* Best individual of the previous generation. */
     private Individual previousBest;
+    private Individual previousBestReplayCopy;
+
+    /* Option to run the simulation internally and run the simulation again on the best individual. */
+    private boolean only_show_best;
 
 
     /**
@@ -57,16 +64,88 @@ public class Population {
 
         species = new ArrayList<>();
         generation = 0;
+
+        only_show_best = false;
     }
 
 
+    /**
+     * Step by step simulation. Updates and renders all alive individuals.
+     */
     public void updateAliveIndividuals () {
-        for (Individual individual : individuals) {
-            if (!individual.isAlive()) continue;
-            individual.updateSensors();
-            individual.think();
-            individual.move();
+        if (only_show_best) throw new RuntimeException("Step by step simulation is not available in " +
+                "only_show_best mode.");
+
+        for (Individual i : individuals) {
+            if (!i.isAlive()) continue;
+            i.updateSensors();
+            i.think();
+            i.move();
+            i.render();
         }
+    }
+
+
+    /**
+     * Background simulation. Runs the simulation and calls natural selection. Makes a replay copy
+     * of the best of this generation.
+     *
+     * Should be called once before the render loop.
+     *
+     * @param r Random;
+     * @param innovation generator;
+     */
+    public void runSimulation (Random r, Innovation innovation) {
+        if (!only_show_best) throw new RuntimeException("Background simulation is only available in " +
+                "only_show_best mode.");
+
+        long c = 0;
+        while (!areAllDead()) {
+            //if (c > 1000000000) {
+            //    System.out.println("Simulation loop too long, maybe a solution was found.");
+            //    break;
+            //}
+            for (Individual i : individuals) {
+                if(!i.isAlive()) continue;
+                i.updateSensors();
+                i.think();
+                i.move();
+            }
+            //System.out.println(c++);
+        }
+
+        naturalSelection(r, innovation);
+        previousBestReplayCopy = previousBest.copyForReplay();
+    }
+
+
+    /**
+     * Runs the simulation on a copy of the best of the previous generation.
+     */
+    public void replayPreviousBest () {
+        if (!replayIndividualIsAlive()) throw new RuntimeException("Replay called on " +
+                "dead individual.");
+        if (!only_show_best) throw new RuntimeException("Replay is only available in only_show_best " +
+                "mode.");
+
+        previousBestReplayCopy.updateSensors();
+        previousBestReplayCopy.think();
+        previousBestReplayCopy.move();
+        previousBestReplayCopy.render();
+    }
+
+
+    /**
+     * When in only_show_best mode, use this to check if still replaying or the simulation should
+     * be rerun.
+     *
+     * @return true if the replay individual is dead; In that case, the simulation should be rerun;
+     */
+    public boolean replayIndividualIsAlive () {
+        if (!only_show_best) throw new RuntimeException("Access to replay individual is only " +
+                "permitted in only_show_best mode.");
+
+        return previousBestReplayCopy.isAlive();
     }
 
 
@@ -226,6 +305,30 @@ public class Population {
             sum += s.getAdjustedFitnessSum();
         }
         return sum;
+    }
+
+
+    /**
+     * Calculates how many individuals are still alive in the population.
+     *
+     * @return number of alive individuals;
+     */
+    public int getNumberOfAliveIndividuals () {
+        int count = 0;
+        for (Individual i : individuals) {
+            if (i.isAlive()) count++;
+        }
+        return count;
+    }
+
+
+    /**
+     * Configuration method to only show the best individual of a generation.
+     *
+     * @param only_show_best true to set the option, false to reset it;
+     */
+    public void setOnly_show_best (boolean only_show_best) {
+        this.only_show_best = only_show_best;
     }
 
 

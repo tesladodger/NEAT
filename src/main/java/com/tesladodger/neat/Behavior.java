@@ -23,6 +23,12 @@ public abstract class Behavior {
     public abstract void move (float[][] controls) ;
 
     /**
+     * Used to render the Individual. Called after the move method. If 'only_show_best' option is
+     * chosen, this method will be called after the simulation.
+     */
+    public abstract void render () ;
+
+    /**
      * Should return true if the individual is still alive.
      *
      * @return true if alive, false otherwise;
@@ -45,4 +51,12 @@ public abstract class Behavior {
      */
     public abstract Behavior copy () ;
 
+    /**
+     * When using the only_show_best option, use this to set the initial conditions of that
+     * individual the same as they were in the original simulation.
+     *
+     * @return a copy of an individual whose initial conditions are exactly the same as the
+     *          original, removing any randomness;
+     */
+    public abstract Behavior copyForReplay () ;
 }

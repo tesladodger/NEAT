@@ -43,10 +43,22 @@ class Individual{
     /**
      * Makes a deep copy of this individual.
      *
-     * @return new individual;
+     * @return new identical individual;
      */
     Individual copy () {
         Individual clone = new Individual(brain.copy(), numberSensors, numberControls, behavior.copy());
+        clone.fitness = fitness;
+        return clone;
+    }
+
+
+    /**
+     * Deep copy of this individual for replay.
+     *
+     * @return new identical individual;
+     */
+    Individual copyForReplay () {
+        Individual clone = new Individual(brain.copy(), numberSensors, numberControls, behavior.copyForReplay());
         clone.fitness = fitness;
         return clone;
     }
@@ -68,6 +80,10 @@ class Individual{
     void move () {
         behavior.move(controls);
         alive = behavior.isAlive();
+    }
+
+    void render () {
+        behavior.render();
     }
 
     private float fitnessFunction () {

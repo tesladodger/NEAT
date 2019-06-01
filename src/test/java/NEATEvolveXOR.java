@@ -26,6 +26,8 @@ public class NEATEvolveXOR {
                 }
             }
 
+            public void render () {}
+
             public boolean isAlive () {
                 return false;
             }
@@ -49,6 +51,9 @@ public class NEATEvolveXOR {
                 return new OhBehave();
             }
 
+            public OhBehave copyForReplay () {
+                return new OhBehave();
+            }
         }
 
 
