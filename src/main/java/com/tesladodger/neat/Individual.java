@@ -3,7 +3,7 @@ package com.tesladodger.neat;
 
 /**
  * Class for the members of a population.
- * Each individual has a genome.
+ * Each individual has a genome and a copy of the extended behavior class, supplied by the user.
  * For games, handles getting information for the sensors, thinking (feed forward), moving and
  * rendering.
  */

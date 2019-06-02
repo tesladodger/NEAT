@@ -35,6 +35,7 @@ class Genome {
     private Map<Integer, NodeGene> nodes;
     private List<Integer> nodeKeys;
 
+    /* Id of the bias node. */
     private int biasNode;
 
     /* How many inputs, outputs and layers in this network. */
@@ -435,12 +436,15 @@ class Genome {
     }
 
 
-    /* ------------------------------------------------------------------------  Debugging */
-
+    /**
+     * Prints a genome in a similar style of the original NEAT paper.
+     *
+     * @param genome to print;
+     */
     static void printGenome (Genome genome) {
         System.out.print("\n" + genome);
 
-
+        // Print the nodes in layers.
         for (int i = genome.layers-1; i >= 0; i--) {
             System.out.print("\n Layer " + i + " : ");
             for (NodeGene n : genome.nodes.values()) {
@@ -450,7 +454,7 @@ class Genome {
             }
         }
 
-
+        // Print the connections.
         System.out.print("\nConnections  :  \n");
 
         for (Integer conKey : genome.connectionKeys) {
@@ -471,9 +475,7 @@ class Genome {
             System.out.printf("|%8.5f", genome.connections.get(conKey).getWeight());
         }
         System.out.println("|");
-
-
         System.out.println();
-
     }
+
 }

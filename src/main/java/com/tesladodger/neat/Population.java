@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 // todo getter for the genome as a list, in order to render it in a game
-// todo expected fitness in only_show_best mode
 
 /**
  * Collection of individuals separated into species.
@@ -34,6 +33,7 @@ public class Population {
 
     /* Option to run the simulation internally and run the simulation again on the best individual. */
     private boolean only_show_best;
+    private float expectedScore;
 
 
     /**
@@ -98,23 +98,18 @@ public class Population {
         if (!only_show_best) throw new RuntimeException("Background simulation is only available in " +
                 "only_show_best mode.");
 
-        long c = 0;
         while (!areAllDead()) {
-            //if (c > 1000000000) {
-            //    System.out.println("Simulation loop too long, maybe a solution was found.");
-            //    break;
-            //}
             for (Individual i : individuals) {
                 if(!i.isAlive()) continue;
                 i.updateSensors();
                 i.think();
                 i.move();
             }
-            //System.out.println(c++);
         }
 
         naturalSelection(r, innovation);
         previousBestReplayCopy = previousBest.copyForReplay();
+        expectedScore = previousBest.getFitness();
     }
 
 
@@ -318,6 +313,19 @@ public class Population {
             if (i.isAlive()) count++;
         }
         return count;
+    }
+
+
+    /**
+     * Getter for the expected score when running only_show_best mode.
+     *
+     * @return score of the previous best;
+     */
+    public float getExpectedScore () {
+        if (!only_show_best) throw new RuntimeException("Expected score only available in only_show_best " +
+                "mode");
+
+        return expectedScore;
     }
 
 
