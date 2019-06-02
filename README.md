@@ -29,7 +29,7 @@ Innovation innovation = new Innovation();
 Behavior behavior = new OhBehave();
 ```
 
-### Creat a population
+### Create a population
 ```java
 Population population = new Population(i, o, s, r, innov, behav);
 ```
@@ -95,6 +95,23 @@ else {
 ```
 
 The copyForReplay() method should remove any randomness in the individual, initial conditions or otherwise.
+
+
+### Public methods
+
+| Method | Description |
+| ------ | ----------- |
+| updateAliveIndividuals() | Advances the simulation one step |
+| runSimulation() | Advances the simulation one generation |
+| replayPreviousBest() | Runs the simulation on the previous best individual |
+| replayIndividualIsAlive() | Returns true if the individual being replayed is alive |
+| areAllDead() | Returns true if all the individuals are dead |
+| naturalSelection() | Creates the next generation |
+| getNumberOfAliveIndividuals() | Returns how many individuals are still alive |
+| getExpectedScore() | Expected score of the replay individual in only_show_best mode |
+| set_only_show_best() | Set this mode |
+| printStats() | Prints the current generation, number of species, best ever score and the genome of the previous best individual |
+
 
 
 ## XOR example
