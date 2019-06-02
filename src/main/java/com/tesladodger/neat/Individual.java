@@ -19,8 +19,8 @@ class Individual{
     private float[][] sensors;
     private float[][] controls;
 
-    private int numberSensors;
-    private int numberControls;
+    private int numSensors;
+    private int numControls;
 
     private Behavior behavior;
 
@@ -28,15 +28,15 @@ class Individual{
     /**
      * Constructor.
      */
-    Individual (Genome brain, int numberSensors, int numberControls, Behavior behavior) {
+    Individual (Genome brain, int numSensors, int numControls, Behavior behavior) {
         fitness = 0;
         alive = true;
 
         this.brain = brain;
         this.behavior = behavior;
 
-        this.numberSensors = numberSensors;
-        this.numberControls = numberControls;
+        this.numSensors = numSensors;
+        this.numControls = numControls;
     }
 
 
@@ -46,7 +46,7 @@ class Individual{
      * @return new identical individual;
      */
     Individual copy () {
-        Individual clone = new Individual(brain.copy(), numberSensors, numberControls, behavior.copy());
+        Individual clone = new Individual(brain.copy(), numSensors, numControls, behavior.copy());
         clone.fitness = fitness;
         return clone;
     }
@@ -58,7 +58,7 @@ class Individual{
      * @return new identical individual;
      */
     Individual copyForReplay () {
-        Individual clone = new Individual(brain.copy(), numberSensors, numberControls, behavior.copyForReplay());
+        Individual clone = new Individual(brain.copy(), numSensors, numControls, behavior.copyForReplay());
         clone.fitness = fitness;
         return clone;
     }
@@ -70,7 +70,7 @@ class Individual{
     }
 
     void think () {
-        controls = new float[sensors.length][numberControls];
+        controls = new float[sensors.length][numControls];
         int i = 0;
         for (float[] pattern : sensors) {
             controls[i++] = brain.feedForward(pattern);
@@ -91,7 +91,7 @@ class Individual{
     }
 
 
-    // ------------------------------------------------------------------------  Invariant methods //
+    // ------------------------------------------------------------------------  Utility methods //
 
     void calculateFitness () {
         fitness = fitnessFunction();
@@ -118,10 +118,10 @@ class Individual{
     }
 
     int getNumberSensors () {
-        return numberSensors;
+        return numSensors;
     }
 
     int getNumberControls () {
-        return numberControls;
+        return numControls;
     }
 }

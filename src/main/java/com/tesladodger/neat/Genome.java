@@ -411,7 +411,7 @@ class Genome {
     }
 
 
-    /* ------------------------------------------------------------------------  Utility functions */
+    /* ------------------------------------------------------------------------  Utility methods */
 
     private void addNodeGene (NodeGene node) {
         nodes.put(node.getId(), node);

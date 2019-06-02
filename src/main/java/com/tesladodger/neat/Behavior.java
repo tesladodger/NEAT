@@ -2,10 +2,10 @@ package com.tesladodger.neat;
 
 
 /**
- * Abstract class that contains the methods relating to an individual that are particular to a
+ * Interface that contains the methods relating to an individual that are particular to a
  * problem. Is the contact between the user and the algorithm.
  */
-public abstract class Behavior {
+public interface Behavior {
 
     /**
      * Method that returns the inputs to the neural network.
@@ -13,34 +13,34 @@ public abstract class Behavior {
      * @return n*m matrix where where m is the number of different input patterns and n is the
      *        actual number of inputs.
      */
-    public abstract float[][] updateSensors () ;
+    float[][] updateSensors () ;
 
     /**
      * Method where the individual acts upon the outputs of the neural network.
      *
      * @param controls raw outputs of the neural network (after sigmoid);
      */
-    public abstract void move (float[][] controls) ;
+    void move (float[][] controls) ;
 
     /**
      * Used to render the Individual. Called after the move method. If 'only_show_best' option is
      * chosen, this method will be called after the simulation.
      */
-    public abstract void render () ;
+    void render () ;
 
     /**
      * Should return true if the individual is still alive.
      *
      * @return true if alive, false otherwise;
      */
-    public abstract boolean isAlive () ;
+    boolean isAlive () ;
 
     /**
      * Method to calculate the fitness of the individual.
      *
      * @return the fitness;
      */
-    public abstract float fitnessFunction () ;
+    float fitnessFunction () ;
 
     /**
      * Should create a completely independent copy of this behavior, to be used by another
@@ -49,7 +49,7 @@ public abstract class Behavior {
      *
      * @return a copy of this behavior;
      */
-    public abstract Behavior copy () ;
+    Behavior copy () ;
 
     /**
      * When using the only_show_best option, use this to set the initial conditions of that
@@ -58,5 +58,5 @@ public abstract class Behavior {
      * @return a copy of an individual whose initial conditions are exactly the same as the
      *          original, removing any randomness;
      */
-    public abstract Behavior copyForReplay () ;
+    Behavior copyForReplay () ;
 }

@@ -8,7 +8,7 @@ public class NEATEvolveXOR {
 
 
         // Extend the Behavior class.
-        class OhBehave extends Behavior {
+        class OhBehave implements Behavior {
 
             private int[] results;
 
@@ -62,6 +62,7 @@ public class NEATEvolveXOR {
         OhBehave behavior = new OhBehave();
 
         Population population = new Population(2, 1, 500, r, innovation, behavior);
+        population.setMode(Population.MODE.FIND_SOLUTION);
 
         // noinspection InfiniteLoopStatement
         while (true) {

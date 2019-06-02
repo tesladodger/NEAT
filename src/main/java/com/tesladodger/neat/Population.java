@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 // todo getter for the genome as a list, in order to render it in a game
+// todo elegant way to exit when a solution is found
+// todo find solution mode
+
 
 /**
  * Collection of individuals separated into species.
@@ -31,21 +35,40 @@ public class Population {
     private Individual previousBest;
     private Individual previousBestReplayCopy;
 
-    /* Option to run the simulation internally and run the simulation again on the best individual. */
-    private boolean only_show_best;
-    private float expectedScore;
+    /* Different modes the simulation can be run. */
+    public static enum MODE {
+        /*
+         * Update the population step (frame) by step, perform natural selection when they are
+         * all dead.
+         */
+        NORMAL,
 
+        /*
+         * Run the entire simulation for a generation, clone the best individual and replay it.
+         */
+        ONLY_SHOW_BEST,
+
+        /*
+         * When the problem has a known solution, this mode provides access to the genome that
+         * achieved that solution.
+         */
+        FIND_SOLUTION,
+        ;
+    }
+
+    private MODE mode;
+    private float expectedScore;
 
     /**
      * Constructor.
      *
-     * @param numberSensors genome param;
-     * @param numberControls genome param;
+     * @param numSensors genome param;
+     * @param numControls genome param;
      * @param popSize number of individuals;
      * @param r Random;
      * @param innovation innovation number generator;
      */
-    public Population (int numberSensors, int numberControls, int popSize,
+    public Population (int numSensors, int numControls, int popSize,
                        Random r, Innovation innovation, Behavior behavior) {
 
         this.popSize = popSize;
@@ -53,10 +76,8 @@ public class Population {
         individuals = new Individual[popSize];
         for (int i = 0; i < popSize; i++) {
             individuals[i] = new Individual(
-                    new Genome(numberSensors, numberControls, false),
-                    numberSensors,
-                    numberControls,
-                    behavior.copy()
+                    new Genome(numSensors, numControls, false),
+                    numSensors, numControls, behavior.copy()
             );
             individuals[i].getBrain().mutate(r, innovation);
         }
@@ -64,7 +85,7 @@ public class Population {
         species = new ArrayList<>();
         generation = 0;
 
-        only_show_best = false;
+        mode = MODE.NORMAL;
     }
 
 
@@ -72,8 +93,8 @@ public class Population {
      * Step by step simulation. Updates and renders all alive individuals.
      */
     public void updateAliveIndividuals () {
-        if (only_show_best) throw new RuntimeException("Step by step simulation is not available in " +
-                "only_show_best mode.");
+        if (mode == MODE.ONLY_SHOW_BEST) throw new RuntimeException("Step by step simulation is" +
+                " not available in ONLY_SHOW_BEST mode.");
 
         for (Individual i : individuals) {
             if (!i.isAlive()) continue;
@@ -95,8 +116,8 @@ public class Population {
      * @param innovation generator;
      */
     public void runSimulation (Random r, Innovation innovation) {
-        if (!only_show_best) throw new RuntimeException("Background simulation is only available in " +
-                "only_show_best mode.");
+        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Background simulation is " +
+                "only available in ONLY_SHOW_BEST mode.");
 
         while (!areAllDead()) {
             for (Individual i : individuals) {
@@ -117,10 +138,10 @@ public class Population {
      * Runs the simulation on a copy of the best of the previous generation.
      */
     public void replayPreviousBest () {
-        if (!replayIndividualIsAlive()) throw new RuntimeException("Replay called on " +
-                "dead individual.");
-        if (!only_show_best) throw new RuntimeException("Replay is only available in only_show_best " +
-                "mode.");
+        if (!replayIndividualIsAlive()) throw new RuntimeException("Replay called on dead " +
+                "individual.");
+        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Replay is only available " +
+                "in ONLY_SHOW_BEST mode.");
 
         previousBestReplayCopy.updateSensors();
         previousBestReplayCopy.think();
@@ -136,15 +157,15 @@ public class Population {
      * @return true if the replay individual is dead; In that case, the simulation should be rerun;
      */
     public boolean replayIndividualIsAlive () {
-        if (!only_show_best) throw new RuntimeException("Access to replay individual is only " +
-                "permitted in only_show_best mode.");
+        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Access to replay individual " +
+                "is only permitted in ONLY_SHOW_BEST mode.");
 
         return previousBestReplayCopy.isAlive();
     }
 
 
     /**
-     * Returns whether or not all the individuals are dead (only useful for games).
+     * Returns whether or not all the individuals are dead.
      *
      * @return true if all individuals are dead;
      */
@@ -201,7 +222,7 @@ public class Population {
         }
 
         // Add a copy of the best for good luck.
-        if (index < nextGen.length-1) {
+        if (index < nextGen.length) {
             nextGen[index++] = previousBest.copy();
         }
 
@@ -322,23 +343,27 @@ public class Population {
      * @return score of the previous best;
      */
     public float getExpectedScore () {
-        if (!only_show_best) throw new RuntimeException("Expected score only available in only_show_best " +
-                "mode");
+        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Expected score only " +
+                "available in ONLY_SHOW_BEST mode");
 
         return expectedScore;
     }
 
 
     /**
-     * Configuration method to only show the best individual of a generation.
+     * Change the mode of this population.
      *
-     * @param only_show_best true to set the option, false to reset it;
+     * @param mode see MODE enum;
      */
-    public void set_only_show_best (boolean only_show_best) {
-        this.only_show_best = only_show_best;
+    public void setMode (MODE mode) {
+        this.mode = mode;
     }
 
 
+    /**
+     * Prints the generation, number of species, best fitness score and calls the printGenome
+     * method on the previous best genome.
+     */
     public void printStats () {
         System.out.println();
         System.out.println("Generation: " + generation +
