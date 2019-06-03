@@ -59,7 +59,7 @@ class NodeGene {
      *
      * @param x value;
      *
-     * @return sigmoid;
+     * @return sigmoid(x);
      */
     private float sigmoidTF (float x) {
         return 1f / (1f + (float) Math.pow(Math.E, -4.9f * x));

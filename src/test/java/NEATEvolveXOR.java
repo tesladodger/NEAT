@@ -26,6 +26,10 @@ public class NEATEvolveXOR {
                 }
             }
 
+            public boolean solutionFound () {
+                return (results[0] == 0) && (results[1] == 1) && results[2] == 1 && results[3] == 0;
+            }
+
             public void render () {}
 
             public boolean isAlive () {
@@ -37,13 +41,6 @@ public class NEATEvolveXOR {
                                Math.abs(results[1] - 1) +
                                Math.abs(results[2] - 1) +
                                Math.abs(results[3]    ));
-                if (d == 4) {
-                    System.out.println("\nSolution found");
-                    for (int i : results) {
-                        System.out.print(i);
-                    }
-                    System.exit(0);
-                }
                 return d*d;
             }
 

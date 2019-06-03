@@ -82,6 +82,10 @@ class Individual{
         alive = behavior.isAlive();
     }
 
+    boolean isSolution () {
+        return behavior.solutionFound();
+    }
+
     void render () {
         behavior.render();
     }

@@ -6,8 +6,6 @@ import java.util.Random;
 
 
 // todo getter for the genome as a list, in order to render it in a game
-// todo elegant way to exit when a solution is found
-// todo find solution mode
 
 
 /**
@@ -36,7 +34,7 @@ public class Population {
     private Individual previousBestReplayCopy;
 
     /* Different modes the simulation can be run. */
-    public static enum MODE {
+    public enum MODE {
         /*
          * Update the population step (frame) by step, perform natural selection when they are
          * all dead.
@@ -44,13 +42,14 @@ public class Population {
         NORMAL,
 
         /*
-         * Run the entire simulation for a generation, clone the best individual and replay it.
+         * Run the entire simulation for a generation without rendering, clone the best individual
+         * and replay it.
          */
         ONLY_SHOW_BEST,
 
         /*
-         * When the problem has a known solution, this mode provides access to the genome that
-         * achieved that solution.
+         * When the problem has a known solution, this mode prints the genome that represents the
+         * solution and exits.
          */
         FIND_SOLUTION,
         ;
@@ -101,6 +100,11 @@ public class Population {
             i.updateSensors();
             i.think();
             i.move();
+            if (mode == MODE.FIND_SOLUTION && i.isSolution()) {
+                System.out.println("\nSolution found in " + generation + " generations:");
+                Genome.printGenome(i.getBrain());
+                System.exit(0);
+            }
             i.render();
         }
     }

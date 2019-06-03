@@ -68,12 +68,13 @@ class Species {
         float excess_disjoint = (float) calculateExcessDisjointNumber(candidate);
         float average_weight_diff = calculateAverageWeightDiff(candidate);
 
-        int normaliser = candidate.getConnectionKeys().size() - 20;
-        if (normaliser < 1) {
-            normaliser = 1;
+        // Large genome normalizer.
+        int N = candidate.getConnectionKeys().size() - 20;
+        if (N < 1) {
+            N = 1;
         }
 
-        float compatibility = (COMPAT_COEF_1 * excess_disjoint) / normaliser;
+        float compatibility = (COMPAT_COEF_1 * excess_disjoint) / N;
         compatibility += COMPAT_COEF_3 * average_weight_diff;
 
         return compatibility <= COMPATIBILITY_THRESHOLD;

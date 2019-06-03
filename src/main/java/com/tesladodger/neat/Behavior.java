@@ -23,6 +23,14 @@ public interface Behavior {
     void move (float[][] controls) ;
 
     /**
+     * In FIND_SOLUTION mode, this method is called after move. If it returns true, the solution
+     * genome is printed and system.exit is called.
+     *
+     * @return true if the genome represents the solution;
+     */
+    boolean solutionFound () ;
+
+    /**
      * Used to render the Individual. Called after the move method. If 'only_show_best' option is
      * chosen, this method will be called after the simulation.
      */
