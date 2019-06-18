@@ -1,5 +1,6 @@
-import java.util.Random;
 import com.tesladodger.neat.*;
+
+import java.util.Random;
 
 
 public class NEATEvolveXOR {
@@ -60,6 +61,9 @@ public class NEATEvolveXOR {
 
         Population population = new Population(2, 1, 500, r, innovation, behavior);
         population.setMode(Population.MODE.FIND_SOLUTION);
+
+        population.saveSolutionToFile("out/xor_solution.txt");
+        population.createSolutionImage("out/xor_solution.png");
 
         // noinspection InfiniteLoopStatement
         while (true) {

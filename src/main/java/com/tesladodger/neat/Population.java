@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 
-// todo getter for the genome as a list, in order to render it in a game
+// todo
+//      - getter for the genome as a list, in order to render it in a game
+//      - find way to import the save file
 
 
 /**
@@ -56,7 +58,23 @@ public class Population {
     }
 
     private MODE mode;
+
+    /* In only show best mode, this is the score of the individual being replayed. */
     private float expectedScore;
+
+    /* The user can save the genome to a file in find solution mode when this boolean is true. */
+    private boolean saveToFile;
+
+    /* File name used when saving a genome to a file. */
+    private String genomeFileName;
+
+    /* The user can create an image of the solution genome in find solution mode when this boolean
+       is true. */
+    private boolean saveToImage;
+
+    /* File name used when creating the image of a genome. */
+    private String imageFileName;
+
 
     /**
      * Constructor.
@@ -85,6 +103,8 @@ public class Population {
         generation = 0;
 
         mode = MODE.NORMAL;
+        saveToFile = false;
+        saveToImage = false;
     }
 
 
@@ -103,6 +123,12 @@ public class Population {
             if (mode == MODE.FIND_SOLUTION && i.isSolution()) {
                 System.out.println("\nSolution found in " + generation + " generations:");
                 Genome.printGenome(i.getBrain());
+                if (saveToFile) {
+                    Genome.saveGenome(i.getBrain(), genomeFileName);
+                }
+                if (saveToImage) {
+                    Genome.saveImage(i.getBrain(), imageFileName);
+                }
                 System.exit(0);
             }
             i.render();
@@ -348,7 +374,7 @@ public class Population {
      */
     public float getExpectedScore () {
         if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Expected score only " +
-                "available in ONLY_SHOW_BEST mode");
+                "available in ONLY_SHOW_BEST mode.");
 
         return expectedScore;
     }
@@ -361,6 +387,34 @@ public class Population {
      */
     public void setMode (MODE mode) {
         this.mode = mode;
+    }
+
+
+    /**
+     * Choose to save the solution in find solution mode to a file.
+     *
+     * @param genomeFileName name of the save file;
+     */
+    public void saveSolutionToFile (String genomeFileName) {
+        if (mode != MODE.FIND_SOLUTION) throw new RuntimeException("Saving the solution is only" +
+                "available in FIND_SOLUTION mode.");
+
+        saveToFile = true;
+        this.genomeFileName = genomeFileName;
+    }
+
+
+    /**
+     * Choose to create an image of the solution in find solution mode.
+     *
+     * @param imageFileName name of the save image;
+     */
+    public void createSolutionImage (String imageFileName) {
+        if (mode != MODE.FIND_SOLUTION) throw new RuntimeException("Creating an image of the" +
+                "solution is only available in FIND_SOLUTION mode.");
+
+        saveToImage = true;
+        this.imageFileName = imageFileName;
     }
 
 

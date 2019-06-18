@@ -1,10 +1,20 @@
 package com.tesladodger.neat;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import javax.imageio.ImageIO;
 
 
 /**
@@ -476,6 +486,97 @@ class Genome {
         }
         System.out.println("|");
         System.out.println();
+    }
+
+
+    /**
+     * Saves the genome connections to a file, to import later.
+     *
+     * @param genome to save;
+     */
+    static void saveGenome (Genome genome, String fileName) {
+        try {
+            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8));
+
+            for (ConnectionGene con : genome.connections.values()) {
+                if (!con.isExpressed()) continue;
+
+                writer.write(" " + con.getInnovationNumber());
+                writer.write(" " + con.getInNode());
+                writer.write(" " + con.getOutNode());
+                writer.write(" " + con.getWeight());
+            }
+
+            writer.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    /**
+     * Creates an image representing the genome.
+     *
+     * @param genome to draw in an image;
+     */
+    static void saveImage (Genome genome, String pathname) {
+        BufferedImage buffImage = new BufferedImage(450, 450, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = buffImage.getGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 450, 450);
+
+        int h = 450, w = 450;
+
+        List<Integer[]> nodeCoords = new ArrayList<>();
+        List<Integer> nodeIds = new ArrayList<>();
+
+        // Loop all the layers.
+        for (int i = 0; i < genome.layers; i++){
+            // Find all the nodes in the current layer and add them to a list.
+            List<NodeGene> nodesInLayer = new ArrayList<>();
+            for (NodeGene node : genome.nodes.values()) {
+                if (node.getLayer() == i) {
+                    nodesInLayer.add(node);
+                }
+            }
+            // Loop the created list and add the ids and coordinates to the corresponding lists.
+            int x = ((i+1)*w) / (genome.layers+1);
+            for (int j = 0; j < nodesInLayer.size(); j++) {
+                int y = ((j+1)*h) / (nodesInLayer.size()+1);
+                nodeCoords.add(new Integer[] {x, y});
+                nodeIds.add(nodesInLayer.get(j).getId());
+            }
+        }
+
+        // Draw the connections.
+        for (ConnectionGene con : genome.connections.values()) {
+            Integer[] from = nodeCoords.get(nodeIds.indexOf(con.getInNode()));
+            Integer[] to = nodeCoords.get(nodeIds.indexOf(con.getOutNode()));
+
+            if (!con.isExpressed()) continue;
+            else if (con.getWeight() >= 0) g.setColor(Color.RED);
+            else g.setColor(Color.BLUE);
+
+            g.drawLine(from[0], from[1], to[0], to[1]);
+        }
+
+        // Draw the nodes.
+        for (int i = 0; i < nodeCoords.size(); i++) {
+            g.setColor(new Color(13, 13, 13));
+            g.fillOval(nodeCoords.get(i)[0]-10, nodeCoords.get(i)[1]-10, 20, 20);
+            g.setColor(Color.WHITE);
+            g.drawString(""+nodeIds.get(i), nodeCoords.get(i)[0]-5, nodeCoords.get(i)[1]+5);
+        }
+
+
+        // Save the image.
+        try {
+            ImageIO.write(buffImage, "PNG", new File(pathname));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }
