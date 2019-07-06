@@ -59,17 +59,20 @@ public class Population {
 
     private MODE mode;
 
-    /* In only show best mode, this is the score of the individual being replayed. */
+    /* In ONLY_SHOW_BEST mode, this is the score of the individual being replayed. */
     private float expectedScore;
 
-    /* The user can save the genome to a file in find solution mode when this boolean is true. */
+    /* In FIND_SOLUTION mode, is set true when the solution is found. */
+    private boolean solutionFound;
+
+    /* The user can save the genome to a file in FIND_SOLUTION mode when this boolean is true. */
     private boolean saveToFile;
 
     /* File name used when saving a genome to a file. */
     private String genomeFileName;
 
-    /* The user can create an image of the solution genome in find solution mode when this boolean
-       is true. */
+    /* The user can create an image of the solution genome in FIND_SOLUTION mode when this boolean
+     * is true. */
     private boolean saveToImage;
 
     /* File name used when creating the image of a genome. */
@@ -110,9 +113,11 @@ public class Population {
 
     /**
      * Step by step simulation. Updates and renders all alive individuals.
+     *
+     * @throws InvalidModeException when called in ONLY_SHOW_BEST mode;
      */
     public void updateAliveIndividuals () {
-        if (mode == MODE.ONLY_SHOW_BEST) throw new RuntimeException("Step by step simulation is" +
+        if (mode == MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Step by step simulation is" +
                 " not available in ONLY_SHOW_BEST mode.");
 
         for (Individual i : individuals) {
@@ -129,10 +134,25 @@ public class Population {
                 if (saveToImage) {
                     Genome.saveImage(i.getBrain(), imageFileName);
                 }
-                System.exit(0);
+                solutionFound = true;
             }
             i.render();
         }
+    }
+
+
+    /**
+     * In FIND_SOLUTION mode, returns whether the solution has been found.
+     *
+     * @return true if the solution has been found, false otherwise;
+     *
+     * @throws InvalidModeException when called outside FIND_SOLUTION mode;
+     */
+    public boolean isSolutionFound () {
+        if (mode != MODE.FIND_SOLUTION) throw new InvalidModeException("Method cannot be called outside" +
+                "FIND_SOLUTION mode.");
+
+        return solutionFound;
     }
 
 
@@ -144,9 +164,11 @@ public class Population {
      *
      * @param r Random;
      * @param innovation generator;
+     *
+     * @throws InvalidModeException when called outside ONLY_SHOW_BEST mode;
      */
     public void runSimulation (Random r, Innovation innovation) {
-        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Background simulation is " +
+        if (mode != MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Background simulation is " +
                 "only available in ONLY_SHOW_BEST mode.");
 
         while (!areAllDead()) {
@@ -166,11 +188,14 @@ public class Population {
 
     /**
      * Runs the simulation on a copy of the best of the previous generation.
+     *
+     * @throws RuntimeException when called after the replay individual is dead;
+     * @throws InvalidModeException when called outside ONLY_SHOW_BEST mode;
      */
     public void replayPreviousBest () {
         if (!replayIndividualIsAlive()) throw new RuntimeException("Replay called on dead " +
                 "individual.");
-        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Replay is only available " +
+        if (mode != MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Replay is only available " +
                 "in ONLY_SHOW_BEST mode.");
 
         previousBestReplayCopy.updateSensors();
@@ -181,13 +206,15 @@ public class Population {
 
 
     /**
-     * When in only_show_best mode, use this to check if still replaying or the simulation should
+     * When in ONLY_SHOW_BEST mode, use this to check if still replaying or the simulation should
      * be rerun.
      *
-     * @return true if the replay individual is dead; In that case, the simulation should be rerun;
+     * @return true if the replay individual is dead. In that case, the simulation should be rerun;
+     *
+     * @throws InvalidModeException when called outside ONLY_SHOW_BEST mode;
      */
     public boolean replayIndividualIsAlive () {
-        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Access to replay individual " +
+        if (mode != MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Access to replay individual " +
                 "is only permitted in ONLY_SHOW_BEST mode.");
 
         return previousBestReplayCopy.isAlive();
@@ -211,6 +238,9 @@ public class Population {
 
     /**
      * Creates the next generation.
+     *
+     * @param r random;
+     * @param innovation innovation generator;
      */
     public void naturalSelection (Random r, Innovation innovation) {
         speciate();
@@ -368,12 +398,14 @@ public class Population {
 
 
     /**
-     * Getter for the expected score when running only_show_best mode.
+     * Getter for the expected score when running ONLY_SHOW_BEST mode.
      *
      * @return score of the previous best;
+     *
+     * @throws InvalidModeException when called outside ONLY_SHOW_BEST mode;
      */
     public float getExpectedScore () {
-        if (mode != MODE.ONLY_SHOW_BEST) throw new RuntimeException("Expected score only " +
+        if (mode != MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Expected score only " +
                 "available in ONLY_SHOW_BEST mode.");
 
         return expectedScore;
@@ -391,12 +423,14 @@ public class Population {
 
 
     /**
-     * Choose to save the solution in find solution mode to a file.
+     * Choose to save the solution in FIND_SOLUTION mode to a file.
      *
      * @param genomeFileName name of the save file;
+     *
+     * @throws InvalidModeException when called outside FIND_SOLUTION mode;
      */
     public void saveSolutionToFile (String genomeFileName) {
-        if (mode != MODE.FIND_SOLUTION) throw new RuntimeException("Saving the solution is only" +
+        if (mode != MODE.FIND_SOLUTION) throw new InvalidModeException("Saving the solution is only" +
                 "available in FIND_SOLUTION mode.");
 
         saveToFile = true;
@@ -405,12 +439,14 @@ public class Population {
 
 
     /**
-     * Choose to create an image of the solution in find solution mode.
+     * Choose to create an image of the solution in FIND_SOLUTION mode.
      *
      * @param imageFileName name of the save image;
+     *
+     * @throws InvalidModeException when called outside FIND_SOLUTION mode;
      */
     public void createSolutionImage (String imageFileName) {
-        if (mode != MODE.FIND_SOLUTION) throw new RuntimeException("Creating an image of the" +
+        if (mode != MODE.FIND_SOLUTION) throw new InvalidModeException("Creating an image of the" +
                 "solution is only available in FIND_SOLUTION mode.");
 
         saveToImage = true;

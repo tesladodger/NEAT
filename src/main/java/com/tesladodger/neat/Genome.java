@@ -1,7 +1,6 @@
 package com.tesladodger.neat;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -149,7 +148,7 @@ class Genome {
 
 
     /**
-     * Mutates a connection by changing its weight.
+     * Mutates all the connections by changing their weight.
      *
      * @param r random;
      */
@@ -521,12 +520,13 @@ class Genome {
      * @param genome to draw in an image;
      */
     static void saveImage (Genome genome, String pathname) {
-        BufferedImage buffImage = new BufferedImage(450, 450, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = buffImage.getGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, 450, 450);
+        int s = 450;  // Side length of the image.
 
-        int h = 450, w = 450;
+        BufferedImage buffImage = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = buffImage.getGraphics();
+        Graphics2D g2 = (Graphics2D) g;
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, s, s);
 
         List<Integer[]> nodeCoords = new ArrayList<>();
         List<Integer> nodeIds = new ArrayList<>();
@@ -541,9 +541,9 @@ class Genome {
                 }
             }
             // Loop the created list and add the ids and coordinates to the corresponding lists.
-            int x = ((i+1)*w) / (genome.layers+1);
+            int x = ((i+1)*s) / (genome.layers+1);
             for (int j = 0; j < nodesInLayer.size(); j++) {
-                int y = ((j+1)*h) / (nodesInLayer.size()+1);
+                int y = ((j+1)*s) / (nodesInLayer.size()+1);
                 nodeCoords.add(new Integer[] {x, y});
                 nodeIds.add(nodesInLayer.get(j).getId());
             }
@@ -555,8 +555,14 @@ class Genome {
             Integer[] to = nodeCoords.get(nodeIds.indexOf(con.getOutNode()));
 
             if (!con.isExpressed()) continue;
-            else if (con.getWeight() >= 0) g.setColor(Color.RED);
-            else g.setColor(Color.BLUE);
+            else if (con.getWeight() >= 0) {
+                g.setColor(Color.RED);
+                g2.setStroke(new BasicStroke(con.getWeight()*3));
+            }
+            else {
+                g.setColor(Color.BLUE);
+                g2.setStroke(new BasicStroke(con.getWeight()*-3));
+            }
 
             g.drawLine(from[0], from[1], to[0], to[1]);
         }

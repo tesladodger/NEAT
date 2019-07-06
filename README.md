@@ -6,4 +6,4 @@ This is a java library for the NEAT algorithm. To see it in action,
 [see my pole balancing problem examples in Processing](https://github.com/tesladodger/PoleBalancingProblem_NEAT).
 
 
-To learn how to use it, read [wiki](https://github.com/tesladodger/NEAT/wiki).
+To learn how to use it, read the [wiki](https://github.com/tesladodger/NEAT/wiki).

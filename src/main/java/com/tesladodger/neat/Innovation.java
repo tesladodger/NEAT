@@ -31,6 +31,10 @@ public class Innovation {
 
     private List<CIO> history;
 
+
+    /**
+     * Constructor.
+     */
     public Innovation () {
         history = new ArrayList<>();
     }

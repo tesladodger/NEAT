@@ -8,7 +8,7 @@ public class NEATEvolveXOR {
     public static void main (String[] grugs) {
 
 
-        // Extend the Behavior class.
+        // Implement the Behavior interface.
         class OhBehave implements Behavior {
 
             private int[] results;
@@ -59,14 +59,14 @@ public class NEATEvolveXOR {
         Innovation innovation = new Innovation();
         OhBehave behavior = new OhBehave();
 
-        Population population = new Population(2, 1, 500, r, innovation, behavior);
+        Population population = new Population(2, 1, 150, r, innovation, behavior);
         population.setMode(Population.MODE.FIND_SOLUTION);
 
         population.saveSolutionToFile("out/xor_solution.txt");
         population.createSolutionImage("out/xor_solution.png");
 
-        // noinspection InfiniteLoopStatement
-        while (true) {
+
+        while (!population.isSolutionFound()) {
             population.updateAliveIndividuals();
             population.naturalSelection(r, innovation);
             population.printStats();
