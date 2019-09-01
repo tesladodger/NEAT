@@ -494,16 +494,17 @@ class Genome {
      * @param genome to save;
      */
     static void saveGenome (Genome genome, String fileName) {
+        fileName = fileName + ".csv";
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8));
 
             for (ConnectionGene con : genome.connections.values()) {
                 if (!con.isExpressed()) continue;
 
-                writer.write(" " + con.getInnovationNumber());
-                writer.write(" " + con.getInNode());
-                writer.write(" " + con.getOutNode());
-                writer.write(" " + con.getWeight());
+                writer.write(con.getInnovationNumber() + ", ");
+                writer.write(con.getInNode() + ", ");
+                writer.write(con.getOutNode() + ", ");
+                writer.write(con.getWeight() + ",\n");
             }
 
             writer.close();

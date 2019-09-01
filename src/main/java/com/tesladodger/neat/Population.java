@@ -7,7 +7,9 @@ import java.util.Random;
 
 // todo
 //      - getter for the genome as a list, in order to render it in a game
-//      - find way to import the save file
+//      - multithreaded individual update
+//      - find solution mode should be a method, not a loop
+//      - find way to import the csv
 
 
 /**
@@ -50,8 +52,8 @@ public class Population {
         ONLY_SHOW_BEST,
 
         /*
-         * When the problem has a known solution, this mode prints the genome that represents the
-         * solution and exits.
+         * When the problem has a known solution. Prints the genome of the solution and, when
+         * applicable, creates the text file and image of the solution.
          */
         FIND_SOLUTION,
         ;
@@ -78,6 +80,9 @@ public class Population {
     /* File name used when creating the image of a genome. */
     private String imageFileName;
 
+    /* For multithreaded update of the individuals. */
+    private int threads;
+
 
     /**
      * Constructor.
@@ -87,9 +92,12 @@ public class Population {
      * @param popSize number of individuals;
      * @param r Random;
      * @param innovation innovation number generator;
+     * @param behavior implementation of the Behavior interface;
+     * @param threads number of threads to be created when updating the simulation;
      */
     public Population (int numSensors, int numControls, int popSize,
-                       Random r, Innovation innovation, Behavior behavior) {
+                       Random r, Innovation innovation, Behavior behavior,
+                       int threads) {
 
         this.popSize = popSize;
 
@@ -108,11 +116,16 @@ public class Population {
         mode = MODE.NORMAL;
         saveToFile = false;
         saveToImage = false;
+
+        this.threads = threads;
     }
 
 
     /**
      * Step by step simulation. Updates and renders all alive individuals.
+     *
+     * In FIND_SOLUTION mode, prints the corresponding genome and, if applicable, calls the methods
+     * to save it to a file and an image.
      *
      * @throws InvalidModeException when called in ONLY_SHOW_BEST mode;
      */
@@ -138,6 +151,11 @@ public class Population {
             }
             i.render();
         }
+    }
+
+    public void multithreadedUpdate () {
+        MultiThreadedUpdate multiThreadedUpdate = new MultiThreadedUpdate(individuals, threads);
+        multiThreadedUpdate.compute();
     }
 
 
@@ -192,7 +210,7 @@ public class Population {
      * @throws RuntimeException when called after the replay individual is dead;
      * @throws InvalidModeException when called outside ONLY_SHOW_BEST mode;
      */
-    public void replayPreviousBest () {
+    public void updatePreviousBestReplay () {
         if (!replayIndividualIsAlive()) throw new RuntimeException("Replay called on dead " +
                 "individual.");
         if (mode != MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Replay is only available " +
@@ -454,10 +472,10 @@ public class Population {
     }
 
 
-    /**
+    /*
      * Prints the generation, number of species, best fitness score and calls the printGenome
      * method on the previous best genome.
-     */
+
     public void printStats () {
         System.out.println();
         System.out.println("Generation: " + generation +
@@ -466,6 +484,22 @@ public class Population {
 
         Genome.printGenome(previousBest.getBrain());
         System.out.println();
+    }*/
+
+    public int getGeneration () {
+        return generation;
+    }
+
+    public int getNumberSpecies () {
+        return species.size();
+    }
+
+    public float getBestScore () {
+        return bestEver.getFitness();
+    }
+
+    public void printPreviousBestGenome () {
+        Genome.printGenome(previousBest.getBrain());
     }
 
 }

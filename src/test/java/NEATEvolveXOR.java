@@ -59,17 +59,17 @@ public class NEATEvolveXOR {
         Innovation innovation = new Innovation();
         OhBehave behavior = new OhBehave();
 
-        Population population = new Population(2, 1, 150, r, innovation, behavior);
+        Population population = new Population(2, 1, 150, r, innovation, behavior, 1);
         population.setMode(Population.MODE.FIND_SOLUTION);
 
-        population.saveSolutionToFile("out/xor_solution.txt");
+        population.saveSolutionToFile("out/xor_solution");
         population.createSolutionImage("out/xor_solution.png");
 
 
         while (!population.isSolutionFound()) {
+            System.out.println(population.getGeneration());
             population.updateAliveIndividuals();
             population.naturalSelection(r, innovation);
-            population.printStats();
         }
 
     }
