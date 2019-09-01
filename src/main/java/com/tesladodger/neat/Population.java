@@ -7,7 +7,8 @@ import java.util.Random;
 
 // todo
 //      - getter for the genome as a list, in order to render it in a game
-//      - multithreaded individual update
+//      - multithreaded individual update (almost done, need to check)
+//      - multithreaded natural selection (don't know how yet)
 //      - find solution mode should be a method, not a loop
 //      - find way to import the csv
 
@@ -156,6 +157,20 @@ public class Population {
     public void multithreadedUpdate () {
         MultiThreadedUpdate multiThreadedUpdate = new MultiThreadedUpdate(individuals, threads);
         multiThreadedUpdate.compute();
+
+        for (Individual i : individuals) {
+            if (i.isSolution()) {
+                System.out.println("\nSolution found in " + generation + " generations:");
+                Genome.printGenome(i.getBrain());
+                if (saveToFile) {
+                    Genome.saveGenome(i.getBrain(), genomeFileName);
+                }
+                if (saveToImage) {
+                    Genome.saveImage(i.getBrain(), imageFileName);
+                }
+                solutionFound = true;
+            }
+        }
     }
 
 
