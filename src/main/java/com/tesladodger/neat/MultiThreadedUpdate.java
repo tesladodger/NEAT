@@ -70,7 +70,6 @@ public class MultiThreadedUpdate extends RecursiveAction {
                 individuals[i].updateSensors();
                 individuals[i].think();
                 individuals[i].move();
-                individuals[i].render();
             }
         }
     }

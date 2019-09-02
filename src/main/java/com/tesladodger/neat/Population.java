@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
 // todo
 //      - getter for the genome as a list, in order to render it in a game
-//      - multithreaded individual update (almost done, need to check)
-//      - multithreaded natural selection (don't know how yet)
-//      - find solution mode should be a method, not a loop
-//      - find way to import the csv
-
+//      - find way to import the csv (that's the easy part) and start from it (that's gonna be a pain in the ass)
+//
+// sad todo
+//      - debug...
 
 /**
  * Collection of individuals separated into species.
@@ -134,29 +132,15 @@ public class Population {
         if (mode == MODE.ONLY_SHOW_BEST) throw new InvalidModeException("Step by step simulation is" +
                 " not available in ONLY_SHOW_BEST mode.");
 
-        for (Individual i : individuals) {
-            if (!i.isAlive()) continue;
-            i.updateSensors();
-            i.think();
-            i.move();
-            if (mode == MODE.FIND_SOLUTION && i.isSolution()) {
-                System.out.println("\nSolution found in " + generation + " generations:");
-                Genome.printGenome(i.getBrain());
-                if (saveToFile) {
-                    Genome.saveGenome(i.getBrain(), genomeFileName);
-                }
-                if (saveToImage) {
-                    Genome.saveImage(i.getBrain(), imageFileName);
-                }
-                solutionFound = true;
-            }
-            i.render();
-        }
-    }
-
-    public void multithreadedUpdate () {
         MultiThreadedUpdate multiThreadedUpdate = new MultiThreadedUpdate(individuals, threads);
         multiThreadedUpdate.compute();
+
+        /* Rendering needs to be single-threaded to work in Processing. */
+        for (Individual i : individuals) {
+            if (i.isAlive()) i.render();
+        }
+
+        if (mode != MODE.FIND_SOLUTION) return;
 
         for (Individual i : individuals) {
             if (i.isSolution()) {
@@ -206,10 +190,8 @@ public class Population {
 
         while (!areAllDead()) {
             for (Individual i : individuals) {
-                if(!i.isAlive()) continue;
-                i.updateSensors();
-                i.think();
-                i.move();
+                MultiThreadedUpdate multiThreadedUpdate = new MultiThreadedUpdate(individuals, threads);
+                multiThreadedUpdate.compute();
             }
         }
 

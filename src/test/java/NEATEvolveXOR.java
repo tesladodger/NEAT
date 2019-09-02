@@ -68,10 +68,11 @@ public class NEATEvolveXOR {
         //long t;
         while (!population.isSolutionFound()) {
             //t = System.currentTimeMillis();
-            System.out.println(population.getGeneration());
-            population.multithreadedUpdate();
+            population.updateAliveIndividuals();
             //System.out.println(System.currentTimeMillis()-t);
             population.naturalSelection(r, innovation);
+            System.out.printf("Generation: %5d   Species: %3d   Fitness: %2f \n",
+                    population.getGeneration(), population.getNumberSpecies(), population.getBestScore());
         }
 
     }
