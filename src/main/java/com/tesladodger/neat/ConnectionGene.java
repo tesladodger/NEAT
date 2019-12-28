@@ -4,7 +4,7 @@ package com.tesladodger.neat;
 /**
  * Contains the information of a connection in the genome.
  */
-class ConnectionGene {
+public class ConnectionGene {
 
     private int inNode;
     private int outNode;
@@ -21,7 +21,7 @@ class ConnectionGene {
      * @param expressed weather this connection is active or not;
      * @param innovationNumber see Innovation class;
      */
-    ConnectionGene (int inNode, int outNode, float weight, boolean expressed, int innovationNumber) {
+    public ConnectionGene (int inNode, int outNode, float weight, boolean expressed, int innovationNumber) {
         this.inNode = inNode;
         this.outNode = outNode;
         this.weight = weight;
@@ -29,7 +29,7 @@ class ConnectionGene {
         this.innovationNumber = innovationNumber;
     }
 
-    void setWeight (float weight) {
+    public void setWeight (float weight) {
         this.weight = weight;
     }
 
@@ -41,11 +41,11 @@ class ConnectionGene {
         expressed = false;
     }
 
-    int getInNode () {
+    public int getInNode () {
         return inNode;
     }
 
-    int getOutNode () {
+    public int getOutNode () {
         return outNode;
     }
 
@@ -57,7 +57,7 @@ class ConnectionGene {
         return expressed;
     }
 
-    int getInnovationNumber () {
+    public int getInnovationNumber () {
         return innovationNumber;
     }
 

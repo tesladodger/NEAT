@@ -11,14 +11,14 @@ import java.util.Random;
 class Species {
 
     /* Threshold to accept a member to this species. */
-    private static final float COMPATIBILITY_THRESHOLD = 3.0f;
+    private static final float COMPATIBILITY_THRESHOLD = 3f;
 
     /* Coefficients to assert similarity between the rep and another genome. */
     private static final float COMPAT_COEF_1 = 1.0f;
     private static final float COMPAT_COEF_3 = 0.4f;
 
     /* Probability of a child being created without crossover. */
-    private static final float MUTATION_WITHOUT_CROSSOVER_PROBABILITY = 0.25f;
+    private static final float MUTATION_WITHOUT_CROSSOVER_PROBABILITY = 0.1f;
 
 
     /* List of members of this species. */
@@ -157,9 +157,7 @@ class Species {
 
         if (r.nextFloat() < MUTATION_WITHOUT_CROSSOVER_PROBABILITY) {
             child = pickAMember(r).copy();
-        }
-
-        else {
+        } else {
             Individual parent1 = pickAMember(r);
             Individual parent2 = pickAMember(r);
 

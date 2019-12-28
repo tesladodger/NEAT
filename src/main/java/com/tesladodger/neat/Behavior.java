@@ -48,7 +48,7 @@ public interface Behavior {
      *
      * @return the fitness;
      */
-    float fitnessFunction () ;
+    float fitnessFunction (Individual individual) ;
 
     /**
      * Should create a completely independent copy of this behavior, to be used by another

@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Contains the information of a node in the genome.
  */
-class NodeGene {
+public class NodeGene {
 
     public enum TYPE {
         INPUT,
@@ -29,7 +29,7 @@ class NodeGene {
      * @param id of the next node in the genome it's created;
      * @param layer that the node occupies in the structure;
      */
-    NodeGene (TYPE type, int id, int layer) {
+    public NodeGene (TYPE type, int id, int layer) {
         this.type = type;
         this.id = id;
         this.layer = layer;
@@ -55,7 +55,7 @@ class NodeGene {
     }
 
     /**
-     * Calculates the sigmoidal transfer function.
+     * Calculates the sigmoid transfer function.
      *
      * @param x value;
      *

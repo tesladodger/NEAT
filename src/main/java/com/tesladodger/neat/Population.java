@@ -7,9 +7,7 @@ import java.util.Random;
 // todo
 //      - getter for the genome as a list, in order to render it in a game
 //      - find way to import the csv (that's the easy part) and start from it (that's gonna be a pain in the ass)
-//
-// sad todo
-//      - debug...
+//      - import just one individual and start from it or import the entire population
 
 /**
  * Collection of individuals separated into species.
@@ -52,7 +50,7 @@ public class Population {
 
         /*
          * When the problem has a known solution. Prints the genome of the solution and, when
-         * applicable, creates the text file and image of the solution.
+         * applicable, creates a csv file and image of the solution.
          */
         FIND_SOLUTION,
         ;
@@ -84,6 +82,22 @@ public class Population {
 
 
     /**
+     * Constructor with default single threaded update.
+     *
+     * @param numSensors genome param;
+     * @param numControls genome param;
+     * @param popSize number of individuals;
+     * @param r Random;
+     * @param innovation innovation number generator;
+     * @param behavior implementation of the behavior interface;
+     */
+    public Population (int numSensors, int numControls, int popSize,
+                       Random r, Innovation innovation, Behavior behavior) {
+        this(numSensors, numControls, popSize, r, innovation, behavior, 1);
+    }
+
+
+    /**
      * Constructor.
      *
      * @param numSensors genome param;
@@ -106,6 +120,7 @@ public class Population {
                     new Genome(numSensors, numControls, false),
                     numSensors, numControls, behavior.copy()
             );
+            // This will fully connect the initial nodes.
             individuals[i].getBrain().mutate(r, innovation);
         }
 
@@ -145,7 +160,7 @@ public class Population {
         for (Individual i : individuals) {
             if (i.isSolution()) {
                 System.out.println("\nSolution found in " + generation + " generations:");
-                Genome.printGenome(i.getBrain());
+                Genome.printlnGenome(i.getBrain());
                 if (saveToFile) {
                     Genome.saveGenome(i.getBrain(), genomeFileName);
                 }
@@ -496,7 +511,7 @@ public class Population {
     }
 
     public void printPreviousBestGenome () {
-        Genome.printGenome(previousBest.getBrain());
+        Genome.printlnGenome(previousBest.getBrain());
     }
 
 }

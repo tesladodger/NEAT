@@ -37,7 +37,7 @@ public class NEATEvolveXOR {
                 return false;
             }
 
-            public float fitnessFunction () {
+            public float fitnessFunction (Individual individual) {
                 float d = 4 - (Math.abs(results[0]    ) +
                                Math.abs(results[1] - 1) +
                                Math.abs(results[2] - 1) +
@@ -63,13 +63,10 @@ public class NEATEvolveXOR {
         population.setMode(Population.MODE.FIND_SOLUTION);
 
         //population.saveSolutionToFile("out/xor_solution");
-        //population.createSolutionImage("out/xor_solution.png");
+        population.createSolutionImage("out/xor_solution");
 
-        //long t;
         while (!population.isSolutionFound()) {
-            //t = System.currentTimeMillis();
             population.updateAliveIndividuals();
-            //System.out.println(System.currentTimeMillis()-t);
             population.naturalSelection(r, innovation);
             System.out.printf("Generation: %5d   Species: %3d   Fitness: %2f \n",
                     population.getGeneration(), population.getNumberSpecies(), population.getBestScore());

@@ -7,7 +7,7 @@ package com.tesladodger.neat;
  * For games, handles getting information for the sensors, thinking (feed forward), moving and
  * rendering.
  */
-class Individual{
+public class Individual{
 
     private float fitness;
     private boolean alive;
@@ -91,7 +91,7 @@ class Individual{
     }
 
     private float fitnessFunction () {
-        return behavior.fitnessFunction();
+        return behavior.fitnessFunction(this);
     }
 
 
@@ -127,5 +127,9 @@ class Individual{
 
     int getNumberControls () {
         return numControls;
+    }
+
+    public int getLayers () {
+        return brain.layers;
     }
 }

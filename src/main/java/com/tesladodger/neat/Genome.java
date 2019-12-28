@@ -20,27 +20,28 @@ import javax.imageio.ImageIO;
  * Contains the nodes and connections of a single network.
  * Handles mutation and crossover (static operation).
  */
-class Genome {
+public class Genome {
 
     /* Probability of mutating the weight of all connections. */
-    private static final float WEIGHT_MUTATION_PROBABILITY = 0.8f;
+    public static float WEIGHT_MUTATION_PROBABILITY = 0.8f;
 
     /* Probability of mutating a connection to a new random number. */
-    private static final float NEW_RANDOM_WEIGHT_PROBABILITY = 0.1f;
+    public static float NEW_RANDOM_WEIGHT_PROBABILITY = 0.1f;
 
     /* Probability of disabling a connection if either parent has it disabled. */
-    private static final float DISABLE_CONNECTION_PROBABILITY = 0.75f;
+    public static float DISABLE_CONNECTION_PROBABILITY = 0.75f;
 
     /* Probability of adding a new node. */
-    private static final float NEW_NODE_PROBABILITY = 0.03f;
+    public static float NEW_NODE_PROBABILITY = 0.03f;
 
     /* Probability of adding a new connection. */
-    private static final float NEW_CONNECTION_PROBABILITY = 0.05f;
+    public static float NEW_CONNECTION_PROBABILITY = 0.05f;
 
-    /* Maps from innovation number to connections and nodes, and lists of all the keys
-     * for random selection. */
+    /* Map from innovation number to connection, and list of all numbers for random selection */
     private Map<Integer, ConnectionGene> connections;
     private List<Integer> connectionKeys;
+
+    /* Map from id to node and list of all ids for random selection. */
     private Map<Integer, NodeGene> nodes;
     private List<Integer> nodeKeys;
 
@@ -50,7 +51,7 @@ class Genome {
     /* How many inputs, outputs and layers in this network. */
     private int inputNumber;
     private int outputNumber;
-    private int layers;
+    int layers;
 
 
     /**
@@ -61,8 +62,10 @@ class Genome {
      * @param fromCrossover boolean, true when this genome if being created from the copy or
      *                      crossover functions. Since the nodes will be copied, there's no
      *                      need to create the input and output nodes;
+     *
+     * @throws IllegalArgumentException when input or output numbers are less than 1;
      */
-    Genome (int inputNumber, int outputNumber, boolean fromCrossover) {
+    public Genome (int inputNumber, int outputNumber, boolean fromCrossover) {
         if (inputNumber < 1 || outputNumber < 1) throw new
                 IllegalArgumentException("Number of inputs and outputs must be natural numbers.");
 
@@ -98,7 +101,7 @@ class Genome {
      *
      * @return new genome;
      */
-    Genome copy () {
+    public Genome copy () {
         Genome clone = new Genome(inputNumber, outputNumber, true);
 
         // Add copies of the nodes to the copy genome.
@@ -126,13 +129,12 @@ class Genome {
      * @param r Random;
      * @param innovation innovation number counter;
      */
-    void mutate (Random r, Innovation innovation) {
+    public void mutate (Random r, Innovation innovation) {
         // If there are no connections, connect all the inputs to the outputs.
         if (connections.size() == 0) {
             for (int i = 0; i < (inputNumber + 1) * outputNumber; i++) {
                 addConnectionMutation(r, innovation);
             }
-            return;
         }
 
         if (r.nextFloat() < WEIGHT_MUTATION_PROBABILITY) {
@@ -169,7 +171,7 @@ class Genome {
      *
      * @param r random;
      */
-    private void addConnectionMutation (Random r, Innovation innovation) {
+    public void addConnectionMutation (Random r, Innovation innovation) {
         // No connections can be added to a fully connected network.
         if (isFullyConnected()) return;
 
@@ -236,7 +238,7 @@ class Genome {
      *
      * @param r random;
      */
-    private void addNodeMutation (Random r, Innovation innovation) {
+    public void addNodeMutation (Random r, Innovation innovation) {
 
         // Pick a random connection.
         ConnectionGene con = connections.get(connectionKeys.get(r.nextInt(connectionKeys.size())));
@@ -289,7 +291,7 @@ class Genome {
      *
      * @return true if fully connected;
      */
-    private boolean isFullyConnected () {
+    public boolean isFullyConnected () {
         // Each index contains the number of nodes the layer.
         int[] nodesInLayers = new int[layers];
 
@@ -320,7 +322,7 @@ class Genome {
      *
      * @return the output of the neural network;
      */
-    float[] feedForward (float[] inputs) {
+    public float[] feedForward (float[] inputs) {
         if (inputs.length != inputNumber) throw new IllegalArgumentException("" +
                 "The input array must match the number of inputs of the network.");
 
@@ -422,12 +424,12 @@ class Genome {
 
     /* ------------------------------------------------------------------------  Utility methods */
 
-    private void addNodeGene (NodeGene node) {
+    public void addNodeGene (NodeGene node) {
         nodes.put(node.getId(), node);
         nodeKeys.add(node.getId());
     }
 
-    private void addConnectionGene (ConnectionGene connection) {
+    public void addConnectionGene (ConnectionGene connection) {
         connections.put(connection.getInnovationNumber(), connection);
         connectionKeys.add(connection.getInnovationNumber());
     }
@@ -436,11 +438,11 @@ class Genome {
         return nodes;
     }
 
-    Map<Integer, ConnectionGene> getConnections () {
+    public Map<Integer, ConnectionGene> getConnections () {
         return connections;
     }
 
-    List<Integer> getConnectionKeys () {
+    public List<Integer> getConnectionKeys () {
         return connectionKeys;
     }
 
@@ -450,8 +452,8 @@ class Genome {
      *
      * @param genome to print;
      */
-    static void printGenome (Genome genome) {
-        System.out.print("\n" + genome);
+    public static void printlnGenome (Genome genome) {
+        System.out.print(genome);
 
         // Print the nodes in layers.
         for (int i = genome.layers-1; i >= 0; i--) {
@@ -464,7 +466,13 @@ class Genome {
         }
 
         // Print the connections.
-        System.out.print("\nConnections  :  \n");
+        System.out.print("\nConnections  :  ");
+
+        if (genome.connections.size() == 0) {
+            System.out.println("No connections");
+            return;
+        }
+        System.out.println();
 
         for (Integer conKey : genome.connectionKeys) {
             System.out.printf("|  %3s   ", genome.connections.get(conKey).getInnovationNumber());
@@ -493,7 +501,7 @@ class Genome {
      *
      * @param genome to save;
      */
-    static void saveGenome (Genome genome, String fileName) {
+    public static void saveGenome (Genome genome, String fileName) {
         fileName = fileName + ".csv";
         try {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8));
@@ -516,11 +524,11 @@ class Genome {
 
 
     /**
-     * Creates an image representing the genome.
+     * Creates an image of the genome.
      *
      * @param genome to draw in an image;
      */
-    static void saveImage (Genome genome, String pathname) {
+    public static void saveImage (Genome genome, String pathname) {
         int s = 450;  // Side length of the image.
 
         BufferedImage buffImage = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -579,7 +587,7 @@ class Genome {
 
         // Save the image.
         try {
-            ImageIO.write(buffImage, "PNG", new File(pathname));
+            ImageIO.write(buffImage, "PNG", new File(pathname+".png"));
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
